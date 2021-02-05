@@ -1,0 +1,28 @@
+header{
+    height: 75px;
+    background: url(./clouds.jpg);
+    color: white;
+    text-align: center;
+    padding-top: 20px;
+    font-family:'Padauk', sans-serif;
+    font-size: 25px;
+    max-width: 100%; 
+}
+
+#searchCity{
+
+  height: 100%;
+  margin-top: 25px;
+  
+}
+#cityWeather{
+    margin-top: 25px;
+    
+}
+.jumbotron{
+    border-style: solid;
+    border-width: 1px;
+}
+#dayOne, #dayTwo, #dayThree, #dayFour, #dayFive{
+    margin: 10px;
+}
