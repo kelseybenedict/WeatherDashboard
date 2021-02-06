@@ -15,10 +15,17 @@ header{
   margin-top: 25px;
   
 }
+form{
+    margin-bottom: 10px;
+}
 #cityWeather{
     margin-top: 25px;
     
 }
+.dropdown-item{
+    width: 300px;
+}
+
 .jumbotron{
     border-style: solid;
     border-width: 1px;

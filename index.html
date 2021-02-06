@@ -28,10 +28,11 @@
             <p>Search For a City:</p>
             <form class="form-inline">
               <input
-                class="form-control mr-sm-2"
+                class="form-control mr-sm-2 dropdown-item-text"
                 type="search"
                 placeholder="Search"
                 aria-label="Search"
+                id = "city"
               />
               <button
                 class="btn btn-outline-success my-2 my-sm-0"
@@ -41,7 +42,9 @@
                 Search
               </button>
             </form>
+            <div id="recentCities"></div>
           </nav>
+        
         </div>
         <div class="col-md-8" id="cityWeather">
           <div class="jumbotron jumbotron-fluid">
