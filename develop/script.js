@@ -27,7 +27,12 @@ var mainDisplay = document.getElementById("mainDisplay");
 var searchedCities = [];
 let lat;
 let long;
-let cityName;
+var nameOfCity = document.getElementById("cityName");
+let temperature = document.getElementById("temp");
+let humidity = document.getElementById("humidity");
+let windSpeed = document.getElementById("windspeed");
+let uv = document.getElementById("uv");
+let weatherArray = [];
 
 
 // function to search for city
@@ -36,7 +41,7 @@ function searchCity(event) {
     event.preventDefault();
     // getting value from input box
     var city = document.querySelector("#city").value.trim();
-    console.log("input value: " + city);
+    //console.log("input value: " + city);
     // using a http get request
     var requestOptions = {
         method: 'GET',
@@ -73,13 +78,13 @@ function searchCity(event) {
 
 // function to call One Call API to get UV index
 function oneCallAPI() {
-    var oneCallUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${long}&exclude=minutely,hourly&appid=b5afdd7ae8d071c9c6eeca44924bd997`
+    var oneCallUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${long}&units=imperial&exclude=minutely,hourly&appid=b5afdd7ae8d071c9c6eeca44924bd997`
     fetch(oneCallUrl)
         .then(function (response) {
             return response.json();
     })
         .then(function (data) {
-            console.log("NEW", data)
+            //console.log("NEW", data)
             var weatherInfo = {
                 weatherDesc: data.current.weather[0].description,
                 temp: data.current.temp,
@@ -88,7 +93,8 @@ function oneCallAPI() {
                 wind: data.current.wind_speed,
                 uvIndex: data.current.uvi
             }
-            console.log("my weather", weatherInfo)
+            weatherArray = Object.values(weatherInfo)
+            console.log("my weather", weatherArray)
             showCity();
         }) 
        
@@ -101,10 +107,50 @@ function oneCallAPI() {
 function showCity() {
     // I want to display city name, date, icon for weather, temperature, humidity,
     // wind speed, and UV index
-    var currentWeather = document.createElement("p");
-    currentWeather.textContent = window.weatherInfo;
-    console.log("display", window.weatherInfo)
-    mainDisplay.appendChild(currentWeather);
+    
+    var name = document.createElement("h3");
+   
+    if (weatherArray[0].includes("cloud")){
+        name.textContent = weatherArray[2] + weatherIcons.cloudy;
+    } else if ((weatherArray[0].includes("sun")) || (weatherArray[0].includes("clear"))){
+        name.textContent = weatherArray[2] + weatherIcons.sunny;
+    }
+    else if (weatherArray[0].includes("part")){
+        name.textContent = weatherArray[2] + weatherIcons.partlySunny;
+    }
+    else if (weatherArray[0].includes("wind")){
+        name.textContent = weatherArray[2] + weatherIcons.windy;
+    }
+    else if (weatherArray[0].includes("snow")){
+        name.textContent = weatherArray[2] + weatherIcons.snowy;
+    }
+    else if (weatherArray[0].includes("thunder")){
+        name.textContent = weatherArray[2] + weatherIcons.stormy;
+    }
+    else if (weatherArray[0].includes("rain")){
+        name.textContent = weatherArray[2] + weatherIcons.rainy;
+    }
+    else if (weatherArray[0].includes("fog")){
+        name.textContent = weatherArray[2] + weatherIcons.foggy;
+    }// add current date and icon;
+    var temp = document.createElement("p");
+    temp.textContent = "Temperature: " + weatherArray[1] + " ºF";
+    var hum = document.createElement("p");
+    hum.textContent = "Humidity: " + weatherArray[3] + "%";
+    var wind = document.createElement("p");
+    wind.textContent = "Wind speed: " + weatherArray[4] + " MPH";
+    var uvi = document.createElement("p");
+    uvi.textContent = "UV Index: " + weatherArray[5];
+
+
+
+    console.log("display", weatherArray);
+    nameOfCity.appendChild(name);
+    temperature.appendChild(temp);
+    humidity.appendChild(hum);
+    windSpeed.appendChild(wind);
+    uv.appendChild(uvi);
+
 
 };
 
