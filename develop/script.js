@@ -23,7 +23,11 @@ var weatherIcons = {
 // console.log(date)
 var searchBtn = document.getElementById("searchButton");
 var recentCities = document.getElementById("recentCities");
+var mainDisplay = document.getElementById("mainDisplay");
 var searchedCities = [];
+let lat;
+let long;
+let cityName;
 
 
 // function to search for city
@@ -40,20 +44,22 @@ function searchCity(event) {
     };
 
     var requestURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=b5afdd7ae8d071c9c6eeca44924bd997`
-    console.log(requestURL)
     fetch(requestURL, requestOptions)
         .then(function (response) {
             return response.json();
         })
         .then(function (data) {
-            console.log(data)
-            console.log("weather desc: " + data.weather[0].description)
+            lat = data.coord.lat;
+            long = data.coord.lon;
+            cityName = data.name
+            oneCallAPI()
         })
     // adding city entered by user to an array
     searchedCities.push(city);
     // storing that array in local storage
     window.localStorage.setItem("cities", JSON.stringify(searchedCities));
     //storeCity();
+    // display list of cities from local storage
     function displayStorage() {
         searchedCities = JSON.parse(localStorage.getItem("cities"))
         var cityHistory = document.createElement("div");
@@ -63,37 +69,43 @@ function searchCity(event) {
     };
     displayStorage();
 
-
 };
 
-// store search in local storage
-// function storeCity(){
-//     window.localStorage.setItem("cities", JSON.stringify(city));
-//     console.log("city", city)
-
-// };
-// display list of cities from local storage
-// function displayStorage() {
-//     // allScores = JSON.parse(localStorage.getItem("scoreboard"));
-//     // allScores.forEach((element) => {
-//     //     var scoreDiv = document.createElement("div");
-//     //     scoreDiv.textContent = `Initials: ${element.initials}, Score: ${element.score} `
-//     //     quiz.appendChild(scoreDiv);
-//     searchedCities = JSON.parse(localStorage.getItem("cities"))
-//     searchedCities.forEach((element) =>{
-//         var cityHistory = document.createElement("div");
-//         cityHistory.textContent = element.city;
-//         console.log("city history: " + cityHistory)
-//         recentCities.appendChild(cityHistory);
-//     })
-
-
-// };
+// function to call One Call API to get UV index
+function oneCallAPI() {
+    var oneCallUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${long}&exclude=minutely,hourly&appid=b5afdd7ae8d071c9c6eeca44924bd997`
+    fetch(oneCallUrl)
+        .then(function (response) {
+            return response.json();
+    })
+        .then(function (data) {
+            console.log("NEW", data)
+            var weatherInfo = {
+                weatherDesc: data.current.weather[0].description,
+                temp: data.current.temp,
+                name: cityName,
+                humidity: data.current.humidity,
+                wind: data.current.wind_speed,
+                uvIndex: data.current.uvi
+            }
+            console.log("my weather", weatherInfo)
+            showCity();
+        }) 
+       
+            
+}
+// TO DO: do the same thing from lines 59-62 to extract my weather info and display it in jumbotron
+// google index values 
 
 // function to display city weather info and date in jumbotron
 function showCity() {
     // I want to display city name, date, icon for weather, temperature, humidity,
     // wind speed, and UV index
+    var currentWeather = document.createElement("p");
+    currentWeather.textContent = window.weatherInfo;
+    console.log("display", window.weatherInfo)
+    mainDisplay.appendChild(currentWeather);
+
 };
 
 // function to change UV index color based on number
