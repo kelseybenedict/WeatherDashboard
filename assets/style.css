@@ -33,3 +33,13 @@ form{
 #dayOne, #dayTwo, #dayThree, #dayFour, #dayFive{
     margin: 10px;
 }
+
+.low{
+    background-color: green;
+}
+.moderate{
+    background-color: yellow;
+}
+.high{
+    background-color: red;
+}

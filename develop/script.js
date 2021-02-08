@@ -33,6 +33,12 @@ let humidity = document.getElementById("humidity");
 let windSpeed = document.getElementById("windspeed");
 let uv = document.getElementById("uv");
 let weatherArray = [];
+let forecastArray1 = [];
+let day1 = document.getElementById("dayOne");
+let day2 = document.getElementById("dayTwo"); 
+let day3 = document.getElementById("dayThree"); 
+let day4 = document.getElementById("dayFour");
+let day5 = document.getElementById("dayFive");
 
 
 // function to search for city
@@ -53,11 +59,13 @@ function searchCity(event) {
         .then(function (response) {
             return response.json();
         })
+        // recording latitude and longitude to give oneCallAPI
         .then(function (data) {
             lat = data.coord.lat;
             long = data.coord.lon;
             cityName = data.name
             oneCallAPI()
+
         })
     // adding city entered by user to an array
     searchedCities.push(city);
@@ -73,16 +81,17 @@ function searchCity(event) {
         recentCities.appendChild(cityHistory);
     };
     displayStorage();
+    showForecast();
 
 };
 
-// function to call One Call API to get UV index
+// function to call One Call API to get UV index and other criteria
 function oneCallAPI() {
     var oneCallUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${long}&units=imperial&exclude=minutely,hourly&appid=b5afdd7ae8d071c9c6eeca44924bd997`
     fetch(oneCallUrl)
         .then(function (response) {
             return response.json();
-    })
+        })
         .then(function (data) {
             //console.log("NEW", data)
             var weatherInfo = {
@@ -94,11 +103,10 @@ function oneCallAPI() {
                 uvIndex: data.current.uvi
             }
             weatherArray = Object.values(weatherInfo)
-            console.log("my weather", weatherArray)
             showCity();
-        }) 
-       
-            
+        })
+
+
 }
 // TO DO: do the same thing from lines 59-62 to extract my weather info and display it in jumbotron
 // google index values 
@@ -107,30 +115,30 @@ function oneCallAPI() {
 function showCity() {
     // I want to display city name, date, icon for weather, temperature, humidity,
     // wind speed, and UV index
-    
+
     var name = document.createElement("h3");
-   
-    if (weatherArray[0].includes("cloud")){
+
+    if (weatherArray[0].includes("cloud")) {
         name.textContent = weatherArray[2] + weatherIcons.cloudy;
-    } else if ((weatherArray[0].includes("sun")) || (weatherArray[0].includes("clear"))){
+    } else if ((weatherArray[0].includes("sun")) || (weatherArray[0].includes("clear"))) {
         name.textContent = weatherArray[2] + weatherIcons.sunny;
     }
-    else if (weatherArray[0].includes("part")){
+    else if (weatherArray[0].includes("part")) {
         name.textContent = weatherArray[2] + weatherIcons.partlySunny;
     }
-    else if (weatherArray[0].includes("wind")){
+    else if (weatherArray[0].includes("wind")) {
         name.textContent = weatherArray[2] + weatherIcons.windy;
     }
-    else if (weatherArray[0].includes("snow")){
+    else if (weatherArray[0].includes("snow")) {
         name.textContent = weatherArray[2] + weatherIcons.snowy;
     }
-    else if (weatherArray[0].includes("thunder")){
+    else if (weatherArray[0].includes("thunder")) {
         name.textContent = weatherArray[2] + weatherIcons.stormy;
     }
-    else if (weatherArray[0].includes("rain")){
+    else if (weatherArray[0].includes("rain")|| weatherArray[0].includes("shower") || weatherArray[0].includes("drizzle")) {
         name.textContent = weatherArray[2] + weatherIcons.rainy;
     }
-    else if (weatherArray[0].includes("fog")){
+    else if (weatherArray[0].includes("fog")) {
         name.textContent = weatherArray[2] + weatherIcons.foggy;
     }// add current date and icon;
     var temp = document.createElement("p");
@@ -142,27 +150,67 @@ function showCity() {
     var uvi = document.createElement("p");
     uvi.textContent = "UV Index: " + weatherArray[5];
 
-
-
-    console.log("display", weatherArray);
     nameOfCity.appendChild(name);
     temperature.appendChild(temp);
     humidity.appendChild(hum);
     windSpeed.appendChild(wind);
     uv.appendChild(uvi);
+    uvIndex();
 
 
 };
 
 // function to change UV index color based on number
 function uvIndex() {
-
+    if (weatherArray[5] <= 3) {
+        uv.classList.add("low");
+    }
+    else if ((weatherArray[5] > 3) && (weatherArray[5] <= 6)) {
+        uv.classList.add("moderate");
+    }
+    else if (weatherArray[5] > 6) {
+        uv.classList.add("high");
+    }
 };
 
 // function to update 5 day forecast
 function showForecast() {
-
-};
+    city = document.querySelector("#city").value.trim();
+    var forecast = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=imperial&appid=b5afdd7ae8d071c9c6eeca44924bd997`
+    fetch(forecast)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            var forecastCity = data.city.name;
+            var forecastDay1 = {
+                temp: data.list[0].main.temp,
+                hum: data.list[0].main.humidity
+            }
+            var forecastDay2 = {
+                temp: data.list[1].main.temp,
+                hum: data.list[1].main.humidity
+            }
+            var forecastDay2 = {
+                temp: data.list[2].main.temp,
+                hum: data.list[2].main.humidity
+            }
+            var forecastDay2 = {
+                temp: data.list[3].main.temp,
+                hum: data.list[3].main.humidity
+            }
+            var forecastDay2 = {
+                temp: data.list[4].main.temp,
+                hum: data.list[4].main.humidity
+            }
+            forecastArray1 = Object.values(forecastDay1)
+        })
+        if (cityName === window.forecastCity){
+            var forecastTemp = document.createElement("p");
+            forecastTemp.textContent = forecastArray1;
+            day1.appendChild(forecastTemp)
+        }
+}
 
 // event listener for search button
 searchBtn.addEventListener("click", searchCity);
